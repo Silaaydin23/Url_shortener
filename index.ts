@@ -9,6 +9,17 @@ const sql = postgres({
     password: process.env.DB_PASSWORD,     
 });
 
+
+function kodUret(uzunluk: number) {
+    const harfler = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let sonuc = '';
+    for ( let i = 0; i < uzunluk; i++ ) {
+        const rastgeleSayi = Math.floor(Math.random() * harfler.length);
+        sonuc += harfler.charAt(rastgeleSayi);
+    }
+    return sonuc;
+}
+
 const app= new Elysia();
 
 
