@@ -48,6 +48,62 @@ app.get('/', async () => {
     return "Sunucu calisiyor. Veritabani baglantisi tamam.";
 });
 
+app.post('/api/kisalt', async ({ body, set }) => {
+    
+    const veri = body as any;
+    const gelenUrl = veri.url;
+
+    
+    try {
+        new URL(gelenUrl); 
+    } catch (error) {
+        set.status = 400; 
+        return { hata: "Lutfen 'http://' veya 'https://' ile başlayan geçerli bir link girin." };
+    }
+
+    
+    const kisaKod = kodUret(6);
+
+    try {
+        
+        await sql`
+            INSERT INTO linkler (uzun_link, kisa_kod)
+            VALUES (${gelenUrl}, ${kisaKod})
+        `;
+
+        
+        return {
+            mesaj: "link başarıyla kısaltıldı",
+            kisa_link: `http://localhost:3000/${kisaKod}`,
+            orijinal_link: gelenUrl,
+            kod: kisaKod
+        };
+    } catch (hata) {
+        set.status = 500;
+        return { hata: "veritabanı hatasi: " + hata };
+    }
+});
+
+
+app.get('/:kod', async ({ params, set }) => {
+    const kod = params.kod;
+
+    
+    const sonuc: any = await sql`SELECT * FROM linkler WHERE kisa_kod = ${kod}`;
+
+    
+    if (sonuc.length === 0) {
+        set.status = 404;
+        return "aradığınız link bulunamadı.";
+    }
+
+    
+    await sql`UPDATE linkler SET tiklanma_sayisi = tiklanma_sayisi + 1 WHERE kisa_kod = ${kod}`;
+
+    
+    return Response.redirect(sonuc[0].uzun_link);
+});
+
 app.listen(3000);
 
 console.log("Sunucu basladi: http://localhost:3000");
