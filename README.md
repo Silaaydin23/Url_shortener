@@ -12,16 +12,16 @@ Projede Kullandığım Teknolojiler :
 Projeyi geliştirdikten sonra çalıştırmak için izlediğim adımlar : 
 
 1. Önce gerekli kütüphanelerin yüklenmesi için terminale şu komutu yazdım:
-2. ```bash
-3. bun install
-4. ```
+```bash
+bun install
+```
 
 2. Veritabanı bağlantısı için `.env` dosyası oluşturdum ve şifremi buraya ekledim.
 
 3. Sunucuyu aktif etmek içinşu komutu kullandım:
-4. ```bash
+```bash
    bun run index.ts
-   ```
+```
 
 4. Tabloları elle açmak yerine yazdığım `/kurulum` rotasını kullandım. tarayıcıdan `http://localhost:3000/kurulum` adresine gidildiğinde `linkler` tablosu otomatik olarak oluşturuluyor.
 
