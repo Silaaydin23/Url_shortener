@@ -22,6 +22,23 @@ function kodUret(uzunluk: number) {
 
 const app= new Elysia();
 
+app.get('/kurulum', async () => {
+    try {
+        await sql`
+            CREATE TABLE IF NOT EXISTS linkler (
+                id SERIAL PRIMARY KEY,
+                uzun_link TEXT NOT NULL,
+                kisa_kod VARCHAR(10) UNIQUE NOT NULL,
+                tiklanma_sayisi INTEGER DEFAULT 0,
+                eklenme_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                guncellenme_tarihi TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `;
+        return "Tablo basariyla olusturuldu";
+    } catch (hata) {
+        return "Tablo olusturulurken hata: " + hata;
+    }
+});
 
 app.get('/', async () => {
     
