@@ -104,6 +104,71 @@ app.get('/:kod', async ({ params, set }) => {
     return Response.redirect(sonuc[0].uzun_link);
 });
 
+
+
+app.get('/api/link/:kod', async ({ params, set }) => {
+    const kod = params.kod;
+
+    
+    const sonuc: any = await sql`SELECT * FROM linkler WHERE kisa_kod = ${kod}`;
+
+    if (sonuc.length === 0) {
+        set.status = 404;
+        return { hata: "boyle bir link bulunamadı." };
+    }
+
+    
+    return {
+        kisa_kod: sonuc[0].kisa_kod,
+        orijinal_link: sonuc[0].uzun_link,
+        tiklanma_sayisi: sonuc[0].tiklanma_sayisi,
+        olusturulma_tarihi: sonuc[0].eklenme_tarihi,
+        son_guncelleme: sonuc[0].guncellenme_tarihi
+    };
+});
+
+
+app.put('/api/link/:kod', async ({ params, body, set }) => {
+    const kod = params.kod;
+    const veri = body as any;
+    const yeniLink = veri.yeni_link;
+
+    
+    try {
+        new URL(yeniLink);
+    } catch (hata) {
+        set.status = 400;
+        return { hata: "Lutfen geçerli bir link girin." };
+    }
+
+    try {
+        
+        await sql`
+            UPDATE linkler 
+            SET uzun_link = ${yeniLink}, guncellenme_tarihi = CURRENT_TIMESTAMP 
+            WHERE kisa_kod = ${kod}
+        `;
+        return { mesaj: "link başarıyla güncellendi!", yeni_hedef: yeniLink };
+    } catch (hata) {
+        set.status = 500;
+        return { hata: "guncelleme hatası: " + hata };
+    }
+});
+
+
+app.delete('/api/link/:kod', async ({ params, set }) => {
+    const kod = params.kod;
+
+    try {
+        await sql`DELETE FROM linkler WHERE kisa_kod = ${kod}`;
+        return { mesaj: "Link sistemden tamamen silindi." };
+    } catch (hata) {
+        set.status = 500;
+        return { hata: "Silme hatası: " + hata };
+    }
+});
+
+
 app.listen(3000);
 
 console.log("Sunucu basladi: http://localhost:3000");
