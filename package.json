@@ -1,0 +1,16 @@
+{
+  "name": "url_kisaltici",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "elysia": "^1.4.22",
+    "postgres": "^3.4.8"
+  }
+}
